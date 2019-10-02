@@ -1,0 +1,54 @@
+---
+title: "Vessel Tracks + Whale Sightings"
+author: "WorthWhale Team"
+date: "10/2/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r packages}
+
+library(tidyverse)
+library(lubridate)
+
+```
+
+```{r}
+
+# Read in vessel track data for April 20, 2017
+# vesseltracks <- read.csv("data/GPXtoCSV04-20.csv")
+
+# Read in whale sightings data for April 20, 2017
+# whaleclusters <- read.csv("data/2017_clusters_04-20.csv")
+# if we do a read_csv, we can specify how the indiv columns are translated
+  # look in Hadley book for how this works
+  # when googling, include "tidyverse" not even "R"
+
+```
+
+
+```{r}
+
+# vesseltracks$GPStime <- parse_date_time(vesseltracks$time, "%Y/%m/%d %H:%M:%S", tz = "America/Dominica")
+# Match the date you have in your data, R will spit out the correct date format. For Dominica, you have to set the time zone, otherwise R assumes UTC format
+
+# whaleclusters$GPStime <- parse_date_time(whaleclusters$DateTime, "%d/%m/%Y %H:%M:%S", tz = "America/Dominica")
+    # Change the "DateTime" column name to "GPStime" in whaleclusters_0420_2017
+
+#Create function to get whale cluster time to equal the GPS time in order to connect vessel track lat long to whale cluster lat long
+#Subtract the whale cluster gps time and the vessel tracks gps time 
+#find the absolute value 
+#take the min value of the absolute value
+#'#
+#apply the fuction to all rows in the whalecluster df
+# closest <- sapply(seq(nrow(whaleclusters)), function(i) {which.min(abs(whaleclusters$GPStime[i] - vesseltracks$GPStime))})
+
+# whaleclusters$Lat <- vesseltracks$lat[closest]
+
+# whaleclusters$Long <- vesseltracks$lon[closest]
+
+```
