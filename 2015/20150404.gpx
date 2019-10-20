@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+ <trk>
+  <name>ACTIVE LOG091620</name>
+  <trkseg>
+   <trkpt lat="15.284312" lon="-61.376248">
+    <ele>17.260</ele>
+    <time>2015-04-04T13:16:20Z</time>
+   </trkpt>
+   <trkpt lat="15.284315" lon="-61.376250">
+    <ele>17.208</ele>
+    <time>2015-04-04T13:16:30Z</time>
+   </trkpt>
+   <trkpt lat="15.284321" lon="-61.376254">
+    <ele>17.204</ele>
+    <time>2015-04-04T13:16:40Z</time>
+   </trkpt>
+   <trkpt lat="15.284323" lon="-61.376274">
+    <ele>16.218</ele>
+    <time>2015-04-04T13:16:50Z</time>
+   </trkpt>
+   <trkpt lat="15.284325" lon="-61.376281">
+    <ele>15.813</ele>
+    <time>2015-04-04T13:17:00Z</time>
+   </trkpt>
+   <trkpt lat="15.284334" lon="-61.376264">
+    <ele>15.921</ele>
+    <time>2015-04-04T13:17:10Z</time>
+   </trkpt>
+   <trkpt lat="15.284337" lon="-61.376258">
+    <ele>15.844</ele>
+    <time>2015-04-04T13:17:20Z</time>
+   </trkpt>
+   <trkpt lat="15.284335" lon="-61.376251">
+    <ele>15.075</ele>
+    <time>2015-04-04T13:17:30Z</time>
+   </trkpt>
+   <trkpt lat="15.284327" lon="-61.376248">
+    <ele>16.241</ele>
+    <time>2015-04-04T13:17:40Z</time>
+   </trkpt>
+  </trkseg>
+ </trk>
+</gpx>
