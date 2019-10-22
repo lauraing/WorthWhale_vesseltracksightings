@@ -1,59 +1,52 @@
-# convert GPX to CSV (take 2: faster, easier-to-understand version)
+# convert GPX to CSV (take 3: works even if you aren't Frew ...)
 #
 # frew@ucsb.edu 2019-10-09
 #
 # all grovel before my mad UNIX skillz
 
+export HTML_TIDY=                   # disable local "tidy" customizations
+
 cat "$@" |                          # gather input files
     tidy -xml 2>/dev/null |         # convert to one-line-per-XML-tag
     gawk '
+        # expecting:
+        #
+        # <trkpt lat="..." lon="...">
+        # <time>...</time>
+        # </trkpt>
+
+
         BEGIN {
             print "lat,lon,time"    # CSV header
-            in_trk = "F"            # are we processing a track?
+
+            lat = lon = time = "oops"
         }
 
-        /<trk>/ {                   # begin track
-            in_trk = "T"
-
-            next
-        }
-        
-        /<\/trk>/ {                 # end track
-            in_trk = "F"
-
-            next
-        }
-
-        in_trk == "F" {
-            next                    # skip input lines not in tracks
-        }
-
-        /lat=/ {                    # latitude
-            sub(/.*lat="/, "")
-            sub(/".*/, "")
+        /<trkpt/ {
             lat = $0
+            sub(/^.*lat="/, "", lat)
+            sub(/".*$/,     "", lat)
 
-            next
-        }
-
-        /lon=/ {                    # longitude
-            sub(/.*lon="/, "")
-            sub(/".*/, "")
             lon = $0
+            sub(/^.*lon="/, "", lon)
+            sub(/".*$/,     "", lon)
 
             next
         }
 
         /<time>/ {                  # time
-            sub(/.*<time>/, "")
-            sub(/<.*/, "")
-            time = $0
 
+            time = $0
+            sub(/.*<time>/,   "", time)
+            sub(/<\/time>.*/, "", time)
+
+            next
+        }
+
+        /<\/trkpt>/ {
             printf("%s,%s,%s\n", lat, lon, time)
 
-            lat = ""
-            lon = ""
-            time = ""
+            lat = lon = time = ""
 
             next
         }
