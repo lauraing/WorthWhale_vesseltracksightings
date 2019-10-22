@@ -9,20 +9,11 @@ export HTML_TIDY=                   # disable local "tidy" customizations
 cat "$@" |                          # gather input files
     tidy -xml 2>/dev/null |         # convert to one-line-per-XML-tag
     gawk '
-        # expecting:
-        #
-        # <trkpt lat="..." lon="...">
-        # <time>...</time>
-        # </trkpt>
-
-
         BEGIN {
             print "lat,lon,time"    # CSV header
-
-            lat = lon = time = "oops"
         }
 
-        /<trkpt/ {
+        /<trkpt/ {                  # <trkpt lat="..." lon="...">
             lat = $0
             sub(/^.*lat="/, "", lat)
             sub(/".*$/,     "", lat)
@@ -34,8 +25,7 @@ cat "$@" |                          # gather input files
             next
         }
 
-        /<time>/ {                  # time
-
+        /<time>/ {                  # <time>...</time>
             time = $0
             sub(/.*<time>/,   "", time)
             sub(/<\/time>.*/, "", time)
