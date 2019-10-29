@@ -124,19 +124,20 @@ whaleclusters2017$Long <- vesseltracks2017$lon[closest2017]
 ```
 
 ```{r}
-#2017
+#2018
 
 #read in 2017 vessel tracks csv
-vesseltracks2017 <- read.csv("2017.csv")
+vesseltracks2018 <- read.csv("2018.csv")
+
 
 #read in 2016 whale clusters
-whaleclusters2017 <- read.csv("Whale_Clusters/2017_cluster.csv")
+whaleclusters2018 <- read.csv("Whale_Clusters/2018_cluster.csv")
 
 
-vesseltracks2017$GPStime <- parse_date_time(vesseltracks2017$time, "%Y/%m/%d %H:%M:%S", tz = "America/Dominica")
+vesseltracks2018$GPStime <- parse_date_time(vesseltracks2018$time, "%b/%d/%Y %H:%M:%S", tz = "America/Dominica")
 # Match the date you have in your data, R will spit out the correct date format. For Dominica, you have to set the time zone, otherwise R assumes UTC format
 
-whaleclusters2017$GPStime <- parse_date_time(whaleclusters2017$DateTime, "%d/%m/%y %H:%M:%S", tz = "America/Dominica")
+whaleclusters2018$GPStime <- parse_date_time(whaleclusters2018$DateTime, "%d/%m/%y %H:%M:%S", tz = "America/Dominica")
     # Change the "DateTime" column name to "GPStime" in 2016 whale clusters: change Y to y because the year is in two digit format, not four. 
 #
 #Create function to get whale cluster time to equal the GPS time in order to connect vessel track lat long to whale cluster lat long
@@ -145,15 +146,14 @@ whaleclusters2017$GPStime <- parse_date_time(whaleclusters2017$DateTime, "%d/%m/
 #take the min value of the absolute value
 #
 #apply the fuction to all rows in the whalecluster df
-closest2017 <- sapply(seq(nrow(whaleclusters2017)), function(i) {which.min(abs(whaleclusters2017$GPStime[i] - vesseltracks2017$GPStime))})
+closest2018 <- sapply(seq(nrow(whaleclusters2018)), function(i) {which.min(abs(whaleclusters2018$GPStime[i] - vesseltracks2018$GPStime))})
 
-whaleclusters2017$Lat <- vesseltracks2017$lat[closest2017]
+whaleclusters2018$Lat <- vesseltracks2018$lat[closest2018]
 
 whaleclusters2017$Long <- vesseltracks2017$lon[closest2017]
 
 
 
 ```
-
 
 
