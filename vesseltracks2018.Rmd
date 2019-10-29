@@ -1,0 +1,32 @@
+---
+title: "Vessel Tracks 2018"
+author: "Sidney and Laura"
+date: "10/29/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The vessel tracks data for 2018 are in three different months of data, with each month containing their own files. This markdown will combine the files in each folder into one file, and the subsequent files. 
+
+```{r}
+
+#load packages
+library(tidyverse)
+
+
+```
+
+
+```{r}
+
+#load 2018 data from march 14-april 2
+vesseltrack_mar14apr2_1 <- read.csv("2018/separate2018/March14_Apr2/ChartPlotter_20180402_Interval10s_55_1.csv")
+
+
+
+```
+
+
