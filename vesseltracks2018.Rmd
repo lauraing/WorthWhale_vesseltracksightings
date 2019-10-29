@@ -25,6 +25,79 @@ library(tidyverse)
 #load 2018 data from march 14-april 2
 vesseltrack_mar14apr2_1 <- read.csv("2018/separate2018/March14_Apr2/ChartPlotter_20180402_Interval10s_55_1.csv")
 
+vesseltrack_mar14apr2_2 <- read.csv("2018/separate2018/March14_Apr2/ChartPlotter_20180402_Interval10s_55_2.csv")
+
+vesseltrack_mar14apr2_3 <- read.csv("2018/separate2018/March14_Apr2/ChartPlotter_20180402_Interval10s_55_3.csv")
+
+vesseltrack_mar14apr2_4 <- read.csv("2018/separate2018/March14_Apr2/ChartPlotter_20180402_Interval10s_55_4.csv")
+
+vesseltrack_mar14apr2_5 <- read.csv("2018/separate2018/March14_Apr2/ChartPlotter_20180402_Interval10s_55_5.csv")
+
+
+#merge with do.call
+vesseltrack_mar14apr2 <- do.call("rbind", list(vesseltrack_mar14apr2_1, vesseltrack_mar14apr2_2, vesseltrack_mar14apr2_3, vesseltrack_mar14apr2_4, vesseltrack_mar14apr2_5))
+
+
+
+```
+
+```{r}
+
+#load 2018 data from april 2 to may 3
+vesseltrack_apr2may3_1 <- read.csv("2018/separate2018/Apr2_May3/ChartPlotter_20180503_Interval10s_55_1.csv")
+
+vesseltrack_apr2may3_2 <- read.csv("2018/separate2018/Apr2_May3/ChartPlotter_20180503_Interval10s_55_2.csv")
+
+vesseltrack_apr2may3_3 <- read.csv("2018/separate2018/Apr2_May3/ChartPlotter_20180503_Interval10s_55_3.csv")
+
+vesseltrack_apr2may3_4 <- read.csv("2018/separate2018/Apr2_May3/ChartPlotter_20180503_Interval10s_55_4.csv")
+
+vesseltrack_apr2may3_5 <- read.csv("2018/separate2018/Apr2_May3/ChartPlotter_20180503_Interval10s_55_5.csv")
+
+vesseltrack_apr2may3_6 <- read.csv("2018/separate2018/Apr2_May3/ChartPlotter_20180503_Interval10s_55_6.csv")
+
+
+#merge with do.call
+vesseltrack_apr2may3 <- do.call("rbind", list(vesseltrack_apr2may3_1, vesseltrack_apr2may3_2, vesseltrack_apr2may3_3, vesseltrack_apr2may3_4, vesseltrack_apr2may3_5, vesseltrack_apr2may3_6))
+
+
+
+
+```
+
+
+
+```{r}
+
+#load 2018 data from may 3 to may 25
+vesseltrack_may3may25_1 <- read.csv("2018/separate2018/May3_May25/ChartPlotter_20180527_Interval10s_55_1.csv")
+
+vesseltrack_may3may25_2 <- read.csv("2018/separate2018/May3_May25/ChartPlotter_20180527_Interval10s_55_2.csv")
+
+vesseltrack_may3may25_3 <- read.csv("2018/separate2018/May3_May25/ChartPlotter_20180527_Interval10s_55_3.csv")
+
+vesseltrack_may3may25_4 <- read.csv("2018/separate2018/May3_May25/ChartPlotter_20180527_Interval10s_55_4.csv")
+
+vesseltrack_may3may25_5 <- read.csv("2018/separate2018/May3_May25/ChartPlotter_20180527_Interval10s_55_5.csv")
+
+vesseltrack_may3may25_6 <- read.csv("2018/separate2018/May3_May25/ChartPlotter_20180527_Interval10s_55_6.csv")
+
+#merge with do.call
+vesseltrack_may3may25 <- do.call("rbind", list(vesseltrack_may3may25_1, vesseltrack_may3may25_2, vesseltrack_may3may25_3, vesseltrack_may3may25_4, vesseltrack_may3may25_5, vesseltrack_may3may25_6))
+
+
+
+
+```
+
+now combine all three
+
+```{r}
+
+vesseltrack_2018 <- do.call("rbind", list(vesseltrack_mar14apr2, vesseltrack_apr2may3, vesseltrack_may3may25))
+
+#write as total 2018 csv
+write.csv(vesseltrack_2018, "G:/Data/WorthWhale_vesseltracksightings/2018.csv")
 
 
 ```
