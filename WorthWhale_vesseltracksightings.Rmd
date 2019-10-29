@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-```{r packages}
+```{r packages, include=FALSE}
 #load packages
 library(tidyverse)
 library(lubridate)
@@ -32,6 +32,7 @@ whaleclusters <- read.csv("data/2017_clusters_04-20.csv")
 
 ```
 
+THIS IS THE EXAMPLE CODE TO COPY FOR EACH YEAR
 
 ```{r}
 
@@ -54,31 +55,35 @@ whaleclusters$Lat <- vesseltracks$lat[closest]
 whaleclusters$Long <- vesseltracks$lon[closest]
 
 ```
-Create this same chunk for each year. The Whale Cluster data from 2005-2015 already have lat/lon. so only use the vessel tracks data from 2016-2019
+
+Create this same chunk for each year. The Whale Cluster data from 2005-2015 already have lat/lon. so only use the vessel tracks data from 2016-2018
 
 ```{r}
 #read in 2016 vessel traks csv
 
-vesseltracks2014 <- read.csv("2016.csv")
+vesseltracks2016 <- read.csv("2016.csv")
+
+#read in 2016 whale clusters
+whaleclusters2016 <- read.csv("Whale_Clusters/2016_cluster.csv")
 
 
-vesseltracks$GPStime <- parse_date_time(vesseltracks2014$time, "%Y/%m/%d %H:%M:%S", tz = "America/Dominica")
+vesseltracks2016$GPStime <- parse_date_time(vesseltracks2016$time, "%Y/%m/%d %H:%M:%S", tz = "America/Dominica")
 # Match the date you have in your data, R will spit out the correct date format. For Dominica, you have to set the time zone, otherwise R assumes UTC format
 
-whaleclusters$GPStime <- parse_date_time(whaleclusters$DateTime, "%d/%m/%Y %H:%M:%S", tz = "America/Dominica")
-    # Change the "DateTime" column name to "GPStime" in whaleclusters_0420_2017
-
+whaleclusters2016$GPStime <- parse_date_time(whaleclusters2016$DateTime, "%d/%m/%y %H:%M:%S", tz = "America/Dominica")
+    # Change the "DateTime" column name to "GPStime" in 2016 whale clusters: change Y to y because the year is in two digit format, not four. 
+#
 #Create function to get whale cluster time to equal the GPS time in order to connect vessel track lat long to whale cluster lat long
 #Subtract the whale cluster gps time and the vessel tracks gps time 
 #find the absolute value 
 #take the min value of the absolute value
 #
 #apply the fuction to all rows in the whalecluster df
-closest <- sapply(seq(nrow(whaleclusters)), function(i) {which.min(abs(whaleclusters$GPStime[i] - vesseltracks$GPStime))})
+closest2016 <- sapply(seq(nrow(whaleclusters2016)), function(i) {which.min(abs(whaleclusters2016$GPStime[i] - vesseltracks2016$GPStime))})
 
-whaleclusters$Lat <- vesseltracks$lat[closest]
+whaleclusters2016$Lat <- vesseltracks2016$lat[closest2016]
 
-whaleclusters$Long <- vesseltracks$lon[closest]
+whaleclusters2016$Long <- vesseltracks2016$lon[closest2016]
 
 
 ```
