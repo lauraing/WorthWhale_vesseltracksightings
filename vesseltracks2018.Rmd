@@ -94,10 +94,20 @@ now combine all three
 
 ```{r}
 
-vesseltrack_2018 <- do.call("rbind", list(vesseltrack_mar14apr2, vesseltrack_apr2may3, vesseltrack_may3may25))
+vesseltrack_2018_allnames <- do.call("rbind", list(vesseltrack_mar14apr2, vesseltrack_apr2may3, vesseltrack_may3may25))
+
+names(vesseltrack_2018_allnames) <- c("time", "lat", "lon", "date", "time12")  #rename the columns to match the rest of the csv's
+ 
+vesseltracks_2018 <- vesseltrack_2018_allnames %>%
+  select(time, lat, lon)
+
+
+
+
+
 
 #write as total 2018 csv
-write.csv(vesseltrack_2018, "G:/Data/WorthWhale_vesseltracksightings/2018.csv")
+write.csv(vesseltracks_2018, "G:/Data/WorthWhale_vesseltracksightings/2018.csv")
 
 
 ```

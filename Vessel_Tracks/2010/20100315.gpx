@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+ <trk>
+  <name>ACTIVE LOG195405</name>
+  <trkseg>
+   <trkpt lat="15.284123" lon="-61.375954">
+    <ele>17.373</ele>
+    <time>2010-03-15T23:54:05Z</time>
+   </trkpt>
+   <trkpt lat="15.284136" lon="-61.375995">
+    <ele>17.608</ele>
+    <time>2010-03-15T23:54:14Z</time>
+   </trkpt>
+   <trkpt lat="15.284129" lon="-61.375983">
+    <ele>16.435</ele>
+    <time>2010-03-15T23:54:24Z</time>
+   </trkpt>
+   <trkpt lat="15.284171" lon="-61.376087">
+    <ele>16.376</ele>
+    <time>2010-03-15T23:54:34Z</time>
+   </trkpt>
+   <trkpt lat="15.284168" lon="-61.376086">
+    <ele>18.235</ele>
+    <time>2010-03-15T23:54:44Z</time>
+   </trkpt>
+   <trkpt lat="15.284170" lon="-61.376086">
+    <ele>16.268</ele>
+    <time>2010-03-15T23:54:54Z</time>
+   </trkpt>
+   <trkpt lat="15.284175" lon="-61.376088">
+    <ele>16.839</ele>
+    <time>2010-03-15T23:55:04Z</time>
+   </trkpt>
+  </trkseg>
+ </trk>
+</gpx>

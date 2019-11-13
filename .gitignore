@@ -3,3 +3,7 @@
 .RData
 .Ruserdata
 __folder_link
+*.sqlite
+*.pdf
+*.html
+*.sqbpro

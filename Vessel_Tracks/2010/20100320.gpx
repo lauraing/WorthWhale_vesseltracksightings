@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+ <trk>
+  <name>ACTIVE LOG214534</name>
+  <trkseg>
+   <trkpt lat="15.286545" lon="-61.376558">
+    <ele>-16.810</ele>
+    <time>2010-03-21T01:45:33Z</time>
+   </trkpt>
+   <trkpt lat="15.286548" lon="-61.376560">
+    <ele>-16.616</ele>
+    <time>2010-03-21T01:45:43Z</time>
+   </trkpt>
+   <trkpt lat="15.286547" lon="-61.376563">
+    <ele>-17.125</ele>
+    <time>2010-03-21T01:45:53Z</time>
+   </trkpt>
+   <trkpt lat="15.286546" lon="-61.376564">
+    <ele>-15.971</ele>
+    <time>2010-03-21T01:46:03Z</time>
+   </trkpt>
+  </trkseg>
+ </trk>
+</gpx>
