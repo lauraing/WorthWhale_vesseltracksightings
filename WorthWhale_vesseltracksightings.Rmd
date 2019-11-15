@@ -507,9 +507,10 @@ Transfer "whaleclusters2005_2018.csv" to SQLite database:
 
 whalesightings2005_2018 <- read_csv("whaleclusters2005_2018.csv")
 
-filename <- "db.sqlite"
-mydb <- dbConnect(RSQLite::SQLite(), filename)
-dbWriteTable(mydb, "whalesightings2005_2018", whalesightings2005_2018)
+filename <- "whalesightings.sqlite"
+whalesightings <- dbConnect(RSQLite::SQLite(), filename)
+dbWriteTable(whalesightings, "whalesightings2005_2018", whalesightings2005_2018)
 
 ```
 
+wait till the end to create some code to append the table in the database
