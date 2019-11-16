@@ -3,8 +3,6 @@ title: "Vessel Tracks + Whale Sightings"
 author: "WorthWhale Team"
 date: "10/2/2019"
 output:
-  pdf_document: default
-  word_document: default
   html_document: default
 ---
 
@@ -27,44 +25,6 @@ library(DBI) # DBI stands for "database interface" and creates a connection betw
 
 ```
 
-This is the test code to use for the different whale clusters/vessel tracks:
-
-```{r test load data}
-
-# # Read in vessel track data for April 20, 2017
-# vesseltracks <- read.csv("data/GPXtoCSV04-20.csv")
-# 
-# # Read in whale sightings data for April 20, 2017
-# whaleclusters <- read.csv("data/2017_clusters_04-20.csv")
-# # if we do a read_csv, we can specify how the indiv columns are translated
-#   # look in Hadley book for how this works
-#   # when googling, include "tidyverse" not even "R"
-
-```
-
-This is the example code to use for each year:
-
-```{r test code}
-
-# vesseltracks$GPStime <- parse_date_time(vesseltracks$time, "%Y/%m/%d %H:%M:%S", tz = "America/Dominica")
-# # Match the date you have in your data, R will spit out the correct date format. For Dominica, you have to set the time zone, otherwise R assumes UTC format
-# 
-# whaleclusters$GPStime <- parse_date_time(whaleclusters$DateTime, "%d/%m/%Y %H:%M:%S", tz = "America/Dominica")
-#     # Change the "DateTime" column name to "GPStime" in whaleclusters_0420_2017
-# 
-# # Create function to get whale cluster time to equal the GPS time in order to connect vessel track lat long to whale cluster lat long
-# # Subtract the whale cluster gps time and the vessel tracks gps time 
-# # find the absolute value 
-# # take the min value of the absolute value
-# #
-# # apply the fuction to all rows in the whalecluster df
-# closest <- sapply(seq(nrow(whaleclusters)), function(i) {which.min(abs(whaleclusters$GPStime[i] - vesseltracks$GPStime))})
-# 
-# whaleclusters$Lat <- vesseltracks$lat[closest]
-# 
-# whaleclusters$Long <- vesseltracks$lon[closest]
-
-```
 
 Combine whale sightings data with vessel track location data from 2005-2018:
 
@@ -76,7 +36,6 @@ whaleclusters0515 <- read.csv("Whale_Clusters/2005_2015_cluster.csv")
 # Combine the True Time and Date columns because the DateTime column doesn't have all of the times included, or seconds are missing
 whaleclusters0515$TrueDateTime <- paste(whaleclusters0515$Date, "", whaleclusters0515$TrueTime)
 
-nrow(whaleclusters0515) #3559
 
 ```
 
@@ -88,21 +47,27 @@ vesseltrack_2005 <- read.csv("Vessel_Tracks/2005_vesseltracks.csv")
 # Filter out 2005 from 2005-2015 whale clusters data
 whaleclusters2005 <- whaleclusters0515 %>%
   filter(Year == "2005")
-nrow(whaleclusters2005) #667
 
 # Change the "time" column in original vessel track data to "GPStime" that contains the correct UTC time format. The parse_date_time function converts whatever format your data's date is in currently (%Y=4-digit year, %y=2-digit year, %m=month (00-12), %b=abbreviated month, %B=unabbreviated month, %d=day as a number (0-31), %H=hours, %M=minutes, %S=seconds) into the correct format (UTC). Need to set the time zone for Dominica, otherwise R assumes UTC format.
-vesseltrack_2005$GPStime <- parse_date_time(vesseltrack_2005$Time, "%d/%m/%Y %H:%M:%S", tz = "America/Dominica")
+vesseltrack_2005$GPStime <- parse_date_time(vesseltrack_2005$Time, 
+                                            "%d/%m/%Y %H:%M:%S", 
+                                            tz = "America/Dominica")
 
 # Change the "Datetime" column name in original whale clusters data to "GPStime" that contains the correct UTC time format.
-whaleclusters2005$GPStime <- parse_date_time(whaleclusters2005$TrueDateTime, "%d/%m/%Y %H:%M:%S", tz = "America/Dominica")
+whaleclusters2005$GPStime <- parse_date_time(whaleclusters2005$TrueDateTime, 
+                                             "%d/%m/%Y %H:%M:%S", 
+                                             tz = "America/Dominica")
     
 # Create function to match up the timestamp of sightings in the whale cluster data with the closest GPS time from the vessel track data in order to assign geographic coordinates to the whale cluster data.
 # Subtract the whale cluster GPStime and the vessel tracks GPStime.
 # Find the absolute value 
 # Take the min value of the absolute value
 # Apply the fuction to all rows in the whale cluster dataframe
-closest2005 <- sapply(seq(nrow(whaleclusters2005)), function(i) {which.min(abs(whaleclusters2005$GPStime[i] - vesseltrack_2005$GPStime))})
-
+closest2005 <- sapply(seq(nrow(whaleclusters2005)), 
+                      function(i) {
+                        which.min(abs(whaleclusters2005$GPStime[i] - vesseltrack_2005$GPStime))
+                         })
+#use the closest data to attach the lat/long to the whale clusters
 whaleclusters2005$Lat <- vesseltrack_2005$Lat[closest2005]
 
 whaleclusters2005$Long <- vesseltrack_2005$Long[closest2005]
@@ -110,33 +75,40 @@ whaleclusters2005$Long <- vesseltrack_2005$Long[closest2005]
 # Select the columns we need
 finalwc2005 <- whaleclusters2005 %>%
   select(Cluster, GPStime, Lat, Long)
-nrow(finalwc2005) #667
+
 
 ```
 
 ```{r 2007}
 
-# Read in vessel tracks data for 2006
+# Read in vessel tracks data for 2007
 vesseltrack_2007 <- read.csv("Vessel_Tracks/2007_vesseltracks.csv")
 
 # Filter out 2007 from 2005-2015 whale clusters data
 whaleclusters2007 <- whaleclusters0515 %>%
   filter(Year == "2007")
-nrow(whaleclusters2007) #102
 
-# Change the "time" column in original vessel track data to "GPStime" that contains the correct UTC time format. The parse_date_time function converts whatever format your data's date is in currently (%Y=4-digit year, %y=2-digit year, %m=month (00-12), %b=abbreviated month, %B=unabbreviated month, %d=day as a number (0-31), %H=hours, %M=minutes, %S=seconds) into the correct format (UTC). Need to set the time zone for Dominica, otherwise R assumes UTC format.
-vesseltrack_2007$GPStime <- parse_date_time(vesseltrack_2007$time, "%Y/%m/%d %H:%M:%S", tz = "America/Dominica")
+# Change the "time" column in original vessel track data 
+vesseltrack_2007$GPStime <- parse_date_time(vesseltrack_2007$time, 
+                                            "%Y/%m/%d %H:%M:%S", 
+                                            tz = "America/Dominica")
 
-# Change the "Datetime" column name in original whale clusters data to "GPStime" that contains the correct UTC time format.
-whaleclusters2007$GPStime <- parse_date_time(whaleclusters2007$TrueDateTime, "%d/%m/%Y %H:%M:%S", tz = "America/Dominica")
+# Change the "Datetime" column name in original whale clusters data 
+whaleclusters2007$GPStime <- parse_date_time(whaleclusters2007$TrueDateTime, 
+                                             "%d/%m/%Y %H:%M:%S", 
+                                             tz = "America/Dominica")
  
-# Create function to match up the timestamp of sightings in the whale cluster data with the closest GPS time from the vessel track data in order to assign geographic coordinates to the whale cluster data.
+# Create function to match up the timestamp of sightings in the whale cluster data 
 # Subtract the whale cluster GPStime and the vessel tracks GPStime.
 # Find the absolute value 
 # Take the min value of the absolute value
 # Apply the fuction to all rows in the whale cluster dataframe
-closest2007 <- sapply(seq(nrow(whaleclusters2007)), function(i) {which.min(abs(whaleclusters2007$GPStime[i] - vesseltrack_2007$GPStime))})
+closest2007 <- sapply(seq(nrow(whaleclusters2007)), 
+                      function(i) {
+                        which.min(abs(whaleclusters2007$GPStime[i] - vesseltrack_2007$GPStime))
+                        })
 
+#use the closest data to attach the lat/long to the whale clusters
 whaleclusters2007$Lat <- vesseltrack_2007$lat[closest2007]
 
 whaleclusters2007$Long <- vesseltrack_2007$lon[closest2007]
@@ -144,7 +116,7 @@ whaleclusters2007$Long <- vesseltrack_2007$lon[closest2007]
 # Select the columns we need
 finalwc2007 <- whaleclusters2007 %>%
   select(Cluster, GPStime, Lat, Long)
-nrow(finalwc2007) #102
+
 
 ```
 
@@ -156,21 +128,28 @@ vesseltrack_2008 <- read.csv("Vessel_Tracks/2008_vesseltracks.csv")
 # Filter out 2008 from 2005-2015 whale clusters data
 whaleclusters2008 <- whaleclusters0515 %>%
   filter(Year == "2008")
-nrow(whaleclusters2008) #544
 
-# Change the "time" column in original vessel track data to "GPStime" that contains the correct UTC time format. The parse_date_time function converts whatever format your data's date is in currently (%Y=4-digit year, %y=2-digit year, %m=month (00-12), %b=abbreviated month, %B=unabbreviated month, %d=day as a number (0-31), %H=hours, %M=minutes, %S=seconds) into the correct format (UTC). Need to set the time zone for Dominica, otherwise R assumes UTC format.
-vesseltrack_2008$GPStime <- parse_date_time(vesseltrack_2008$time, "%Y/%m/%d %H:%M:%S", tz = "America/Dominica")
+# Change the "time" column in original vessel track data 
+vesseltrack_2008$GPStime <- parse_date_time(vesseltrack_2008$time, 
+                                            "%Y/%m/%d %H:%M:%S", 
+                                            tz = "America/Dominica")
 
-# Change the "Datetime" column name in original whale clusters data to "GPStime" that contains the correct UTC time format.
-whaleclusters2008$GPStime <- parse_date_time(whaleclusters2008$TrueDateTime, "%d/%m/%Y %H:%M:%S", tz = "America/Dominica")
+# Change the "Datetime" column name in original whale clusters data 
+whaleclusters2008$GPStime <- parse_date_time(whaleclusters2008$TrueDateTime, 
+                                             "%d/%m/%Y %H:%M:%S", 
+                                             tz = "America/Dominica")
 
-# Create function to match up the timestamp of sightings in the whale cluster data with the closest GPS time from the vessel track data in order to assign geographic coordinates to the whale cluster data.
+# Create function to match up the timestamp of sightings in the whale cluster data 
 # Subtract the whale cluster GPStime and the vessel tracks GPStime.
 # Find the absolute value 
 # Take the min value of the absolute value
 # Apply the fuction to all rows in the whale cluster dataframe
-closest2008 <- sapply(seq(nrow(whaleclusters2008)), function(i) {which.min(abs(whaleclusters2008$GPStime[i] - vesseltrack_2008$GPStime))})
+closest2008 <- sapply(seq(nrow(whaleclusters2008)), 
+                      function(i) {
+                        which.min(abs(whaleclusters2008$GPStime[i] - vesseltrack_2008$GPStime))
+                        })
 
+#use the closest data to attach the lat/long to the whale clusters
 whaleclusters2008$Lat <- vesseltrack_2008$lat[closest2008]
 
 whaleclusters2008$Long <- vesseltrack_2008$lon[closest2008]
@@ -178,7 +157,7 @@ whaleclusters2008$Long <- vesseltrack_2008$lon[closest2008]
 # Select the columns we need
 finalwc2008 <- whaleclusters2008 %>%
   select(Cluster, GPStime, Lat, Long)
-nrow(finalwc2008) #544
+
 
 ```
 
@@ -190,21 +169,28 @@ vesseltrack_2009 <- read.csv("Vessel_Tracks/2009_vesseltracks.csv")
 # Filter out 2009 from 2005-2015 whale clusters data
 whaleclusters2009 <- whaleclusters0515 %>%
   filter(Year == "2009")
-nrow(whaleclusters2009) #213
 
-# Change the "time" column in original vessel track data to "GPStime" that contains the correct UTC time format. The parse_date_time function converts whatever format your data's date is in currently (%Y=4-digit year, %y=2-digit year, %m=month (00-12), %b=abbreviated month, %B=unabbreviated month, %d=day as a number (0-31), %H=hours, %M=minutes, %S=seconds) into the correct format (UTC). Need to set the time zone for Dominica, otherwise R assumes UTC format.
-vesseltrack_2009$GPStime <- parse_date_time(vesseltrack_2009$time, "%Y/%m/%d %H:%M:%S", tz = "America/Dominica")
+# Change the "time" column in original vessel track data 
+vesseltrack_2009$GPStime <- parse_date_time(vesseltrack_2009$time, 
+                                            "%Y/%m/%d %H:%M:%S", 
+                                            tz = "America/Dominica")
 
-# Change the "Datetime" column name in original whale clusters data to "GPStime" that contains the correct UTC time format.
-whaleclusters2009$GPStime <- parse_date_time(whaleclusters2009$TrueDateTime, "%d/%m/%Y %H:%M:%S", tz = "America/Dominica")
+# Change the "Datetime" column name in original whale clusters data 
+whaleclusters2009$GPStime <- parse_date_time(whaleclusters2009$TrueDateTime, 
+                                             "%d/%m/%Y %H:%M:%S", 
+                                             tz = "America/Dominica")
 
-# Create function to match up the timestamp of sightings in the whale cluster data with the closest GPS time from the vessel track data in order to assign geographic coordinates to the whale cluster data.
+# Create function to match up the timestamp of sightings in the whale cluster data 
 # Subtract the whale cluster GPStime and the vessel tracks GPStime.
 # Find the absolute value 
 # Take the min value of the absolute value
 # Apply the fuction to all rows in the whale cluster dataframe
-closest2009 <- sapply(seq(nrow(whaleclusters2009)), function(i) {which.min(abs(whaleclusters2009$GPStime[i] - vesseltrack_2009$GPStime))})
+closest2009 <- sapply(seq(nrow(whaleclusters2009)), 
+                      function(i) {
+                        which.min(abs(whaleclusters2009$GPStime[i] - vesseltrack_2009$GPStime))
+                        })
 
+#use the closest data to attach the lat/long to the whale clusters
 whaleclusters2009$Lat <- vesseltrack_2009$lat[closest2009]
 
 whaleclusters2009$Long <- vesseltrack_2009$lon[closest2009]
@@ -212,7 +198,7 @@ whaleclusters2009$Long <- vesseltrack_2009$lon[closest2009]
 # Select the columns we need
 finalwc2009 <- whaleclusters2009 %>%
   select(Cluster, GPStime, Lat, Long)
-nrow(finalwc2009) #213
+
 
 ```
 
@@ -224,21 +210,28 @@ vesseltrack_2010 <- read.csv("Vessel_Tracks/2010_vesseltracks.csv")
 # Filter out 2010 from 2005-2015 whale clusters data
 whaleclusters2010 <- whaleclusters0515 %>%
   filter(Year == "2010")
-nrow(whaleclusters2010) #970
 
-# Change the "time" column in original vessel track data to "GPStime" that contains the correct UTC time format. The parse_date_time function converts whatever format your data's date is in currently (%Y=4-digit year, %y=2-digit year, %m=month (00-12), %b=abbreviated month, %B=unabbreviated month, %d=day as a number (0-31), %H=hours, %M=minutes, %S=seconds) into the correct format (UTC). Need to set the time zone for Dominica, otherwise R assumes UTC format.
-vesseltrack_2010$GPStime <- parse_date_time(vesseltrack_2010$time, "%Y/%m/%d %H:%M:%S", tz = "America/Dominica")
+# Change the "time" column in original vessel track data 
+vesseltrack_2010$GPStime <- parse_date_time(vesseltrack_2010$time, 
+                                            "%Y/%m/%d %H:%M:%S", 
+                                            tz = "America/Dominica")
 
-# Change the "Datetime" column name in original whale clusters data to "GPStime" that contains the correct UTC time format.
-whaleclusters2010$GPStime <- parse_date_time(whaleclusters2010$TrueDateTime, "%d/%m/%Y %H:%M:%S", tz = "America/Dominica")
+# Change the "Datetime" column name in original whale clusters data
+whaleclusters2010$GPStime <- parse_date_time(whaleclusters2010$TrueDateTime, 
+                                             "%d/%m/%Y %H:%M:%S", 
+                                             tz = "America/Dominica")
 
-# Create function to match up the timestamp of sightings in the whale cluster data with the closest GPS time from the vessel track data in order to assign geographic coordinates to the whale cluster data.
+# Create function to match up the timestamp of sightings in the whale cluster data 
 # Subtract the whale cluster GPStime and the vessel tracks GPStime.
 # Find the absolute value 
 # Take the min value of the absolute value
 # Apply the fuction to all rows in the whale cluster dataframe
-closest2010 <- sapply(seq(nrow(whaleclusters2010)), function(i) {which.min(abs(whaleclusters2010$GPStime[i] - vesseltrack_2010$GPStime))})
+closest2010 <- sapply(seq(nrow(whaleclusters2010)), 
+                      function(i) {
+                        which.min(abs(whaleclusters2010$GPStime[i] - vesseltrack_2010$GPStime))
+                        })
 
+#use the closest data to attach the lat/long to the whale clusters
 whaleclusters2010$Lat <- vesseltrack_2010$lat[closest2010]
 
 whaleclusters2010$Long <- vesseltrack_2010$lon[closest2010]
@@ -246,7 +239,7 @@ whaleclusters2010$Long <- vesseltrack_2010$lon[closest2010]
 # Select the columns we need
 finalwc2010 <- whaleclusters2010 %>%
   select(Cluster, GPStime, Lat, Long)
-nrow(finalwc2010) #970
+
 
 ```
 
@@ -258,21 +251,28 @@ vesseltrack_2011 <- read.csv("Vessel_Tracks/2011_vesseltracks.csv")
 # Filter out 2011 from 2005-2015 whale clusters data
 whaleclusters2011 <- whaleclusters0515 %>%
   filter(Year == "2011")
-nrow(whaleclusters2011) #317
 
-# Change the "time" column in original vessel track data to "GPStime" that contains the correct UTC time format. The parse_date_time function converts whatever format your data's date is in currently (%Y=4-digit year, %y=2-digit year, %m=month (00-12), %b=abbreviated month, %B=unabbreviated month, %d=day as a number (0-31), %H=hours, %M=minutes, %S=seconds) into the correct format (UTC). Need to set the time zone for Dominica, otherwise R assumes UTC format.
-vesseltrack_2011$GPStime <- parse_date_time(vesseltrack_2011$time, "%Y/%m/%d %H:%M:%S", tz = "America/Dominica")
+# Change the "time" column in original vessel track data 
+vesseltrack_2011$GPStime <- parse_date_time(vesseltrack_2011$time, 
+                                            "%Y/%m/%d %H:%M:%S", 
+                                            tz = "America/Dominica")
 
-# Change the "Datetime" column name in original whale clusters data to "GPStime" that contains the correct UTC time format.
-whaleclusters2011$GPStime <- parse_date_time(whaleclusters2011$TrueDateTime, "%d/%m/%Y %H:%M:%S", tz = "America/Dominica")
+# Change the "Datetime" column name in original whale clusters data 
+whaleclusters2011$GPStime <- parse_date_time(whaleclusters2011$TrueDateTime, 
+                                             "%d/%m/%Y %H:%M:%S", 
+                                             tz = "America/Dominica")
 
-# Create function to match up the timestamp of sightings in the whale cluster data with the closest GPS time from the vessel track data in order to assign geographic coordinates to the whale cluster data.
+# Create function to match up the timestamp of sightings in the whale cluster data 
 # Subtract the whale cluster GPStime and the vessel tracks GPStime.
 # Find the absolute value 
 # Take the min value of the absolute value
 # Apply the fuction to all rows in the whale cluster dataframe
-closest2011 <- sapply(seq(nrow(whaleclusters2011)), function(i) {which.min(abs(whaleclusters2011$GPStime[i] - vesseltrack_2011$GPStime))})
+closest2011 <- sapply(seq(nrow(whaleclusters2011)), 
+                      function(i) {
+                        which.min(abs(whaleclusters2011$GPStime[i] - vesseltrack_2011$GPStime))
+                        })
 
+#use the closest data to attach the lat/long to the whale clusters
 whaleclusters2011$Lat <- vesseltrack_2011$lat[closest2011]
 
 whaleclusters2011$Long <- vesseltrack_2011$lon[closest2011]
@@ -280,7 +280,6 @@ whaleclusters2011$Long <- vesseltrack_2011$lon[closest2011]
 # Select the columns we need
 finalwc2011 <- whaleclusters2011 %>%
   select(Cluster, GPStime, Lat, Long)
-nrow(finalwc2011) #317
 
 ```
 
@@ -293,20 +292,27 @@ vesseltrack_2012 <- read.csv("Vessel_Tracks/2012_vesseltracks.csv")
 # Filter out 2012 from 2005-2015 whale clusters data
 whaleclusters2012 <- whaleclusters0515 %>%
   filter(Year == "2012")
-nrow(whaleclusters2012) #173
 
-# Change the "time" column in original vessel track data to "GPStime" that contains the correct UTC time format. The parse_date_time function converts whatever format your data's date is in currently (%Y=4-digit year, %y=2-digit year, %m=month (00-12), %b=abbreviated month, %B=unabbreviated month, %d=day as a number (0-31), %H=hours, %M=minutes, %S=seconds) into the correct format (UTC). Need to set the time zone for Dominica, otherwise R assumes UTC format.
-vesseltrack_2012$GPStime <- parse_date_time(vesseltrack_2012$time, "%Y/%m/%d %H:%M:%S", tz = "America/Dominica")
 
-# Change the "Datetime" column name in original whale clusters data to "GPStime" that contains the correct UTC time format.
-whaleclusters2012$GPStime <- parse_date_time(whaleclusters2012$TrueDateTime, "%d/%m/%Y %H:%M:%S", tz = "America/Dominica")
+# Change the "time" column in original vessel track data 
+vesseltrack_2012$GPStime <- parse_date_time(vesseltrack_2012$time, 
+                                            "%Y/%m/%d %H:%M:%S", 
+                                            tz = "America/Dominica")
 
-# Create function to match up the timestamp of sightings in the whale cluster data with the closest GPS time from the vessel track data in order to assign geographic coordinates to the whale cluster data.
+# Change the "Datetime" column name in original whale clusters data 
+whaleclusters2012$GPStime <- parse_date_time(whaleclusters2012$TrueDateTime, 
+                                             "%d/%m/%Y %H:%M:%S", 
+                                             tz = "America/Dominica")
+
+# Create function to match up the timestamp of sightings in the whale cluster data 
 # Subtract the whale cluster GPStime and the vessel tracks GPStime.
 # Find the absolute value 
 # Take the min value of the absolute value
 # Apply the fuction to all rows in the whale cluster dataframe
-closest2012 <- sapply(seq(nrow(whaleclusters2012)), function(i) {which.min(abs(whaleclusters2009$GPStime[i] - vesseltrack_2012$GPStime))})
+closest2012 <- sapply(seq(nrow(whaleclusters2012)), 
+                      function(i) {
+                        which.min(abs(whaleclusters2009$GPStime[i] - vesseltrack_2012$GPStime))
+                        })
 
 whaleclusters2012$Lat <- vesseltrack_2012$lat[closest2012]
 
@@ -315,7 +321,7 @@ whaleclusters2012$Long <- vesseltrack_2012$lon[closest2012]
 # Select the columns we need
 finalwc2012 <- whaleclusters2012 %>%
   select(Cluster, GPStime, Lat, Long)
-nrow(finalwc2012) #173
+
 
 ```
 
@@ -329,19 +335,27 @@ whaleclusters2014 <- whaleclusters0515 %>%
   filter(Year == "2014")
 nrow(whaleclusters2014) #81
 
-# Change the "time" column in original vessel track data to "GPStime" that contains the correct UTC time format. The parse_date_time function converts whatever format your data's date is in currently (%Y=4-digit year, %y=2-digit year, %m=month (00-12), %b=abbreviated month, %B=unabbreviated month, %d=day as a number (0-31), %H=hours, %M=minutes, %S=seconds) into the correct format (UTC). Need to set the time zone for Dominica, otherwise R assumes UTC format.
-vesseltrack_2014$GPStime <- parse_date_time(vesseltrack_2014$time, "%Y/%m/%d %H:%M:%S", tz = "America/Dominica")
+# Change the "time" column in original vessel track data 
+vesseltrack_2014$GPStime <- parse_date_time(vesseltrack_2014$time, 
+                                            "%Y/%m/%d %H:%M:%S", 
+                                            tz = "America/Dominica")
 
-# Change the "Datetime" column name in original whale clusters data to "GPStime" that contains the correct UTC time format.
-whaleclusters2014$GPStime <- parse_date_time(whaleclusters2014$TrueDateTime, "%d/%m/%Y %H:%M:%S", tz = "America/Dominica")
+# Change the "Datetime" column name in original whale clusters data 
+whaleclusters2014$GPStime <- parse_date_time(whaleclusters2014$TrueDateTime, 
+                                             "%d/%m/%Y %H:%M:%S", 
+                                             tz = "America/Dominica")
 
-# Create function to match up the timestamp of sightings in the whale cluster data with the closest GPS time from the vessel track data in order to assign geographic coordinates to the whale cluster data.
+# Create function to match up the timestamp of sightings in the whale cluster data 
 # Subtract the whale cluster GPStime and the vessel tracks GPStime.
 # Find the absolute value 
 # Take the min value of the absolute value
 # Apply the fuction to all rows in the whale cluster dataframe
-closest2014 <- sapply(seq(nrow(whaleclusters2014)), function(i) {which.min(abs(whaleclusters2014$GPStime[i] - vesseltrack_2014$GPStime))})
+closest2014 <- sapply(seq(nrow(whaleclusters2014)), 
+                      function(i) {
+                        which.min(abs(whaleclusters2014$GPStime[i] - vesseltrack_2014$GPStime))
+                        })
 
+#use the closest data to attach the lat/long to the whale clusters
 whaleclusters2014$Lat <- vesseltrack_2014$lat[closest2014]
 
 whaleclusters2014$Long <- vesseltrack_2014$lon[closest2014]
@@ -349,7 +363,7 @@ whaleclusters2014$Long <- vesseltrack_2014$lon[closest2014]
 # Select the columns we need
 finalwc2014 <- whaleclusters2014 %>%
   select(Cluster, GPStime, Lat, Long)
-nrow(finalwc2014) #81
+
 
 ```
 
@@ -361,21 +375,28 @@ vesseltrack_2015 <- read.csv("Vessel_Tracks/2015_vesseltracks.csv")
 # Filter out 2015 from 2005-2015 whale clusters data
 whaleclusters2015 <- whaleclusters0515 %>%
   filter(Year == "2015")
-nrow(whaleclusters2015) #492
 
-# Change the "time" column in original vessel track data to "GPStime" that contains the correct UTC time format. The parse_date_time function converts whatever format your data's date is in currently (%Y=4-digit year, %y=2-digit year, %m=month (00-12), %b=abbreviated month, %B=unabbreviated month, %d=day as a number (0-31), %H=hours, %M=minutes, %S=seconds) into the correct format (UTC). Need to set the time zone for Dominica, otherwise R assumes UTC format.
-vesseltrack_2015$GPStime <- parse_date_time(vesseltrack_2015$time, "%Y/%m/%d %H:%M:%S", tz = "America/Dominica")
+# Change the "time" column in original vessel track data 
+vesseltrack_2015$GPStime <- parse_date_time(vesseltrack_2015$time, 
+                                            "%Y/%m/%d %H:%M:%S", 
+                                            tz = "America/Dominica")
 
-# Change the "Datetime" column name in original whale clusters data to "GPStime" that contains the correct UTC time format.
-whaleclusters2015$GPStime <- parse_date_time(whaleclusters2015$TrueDateTime, "%d/%m/%Y %H:%M:%S", tz = "America/Dominica")
+# Change the "Datetime" column name in original whale clusters data 
+whaleclusters2015$GPStime <- parse_date_time(whaleclusters2015$TrueDateTime, 
+                                             "%d/%m/%Y %H:%M:%S", 
+                                             tz = "America/Dominica")
 
-# Create function to match up the timestamp of sightings in the whale cluster data with the closest GPS time from the vessel track data in order to assign geographic coordinates to the whale cluster data.
+# Create function to match up the timestamp of sightings in the whale cluster data 
 # Subtract the whale cluster GPStime and the vessel tracks GPStime.
 # Find the absolute value 
 # Take the min value of the absolute value
 # Apply the fuction to all rows in the whale cluster dataframe
-closest2015 <- sapply(seq(nrow(whaleclusters2015)), function(i) {which.min(abs(whaleclusters2015$GPStime[i] - vesseltrack_2015$GPStime))})
+closest2015 <- sapply(seq(nrow(whaleclusters2015)), 
+                      function(i) {
+                        which.min(abs(whaleclusters2015$GPStime[i] - vesseltrack_2015$GPStime))
+                        })
 
+#use the closest data to attach the lat/long to the whale clusters
 whaleclusters2015$Lat <- vesseltrack_2015$lat[closest2015]
 
 whaleclusters2015$Long <- vesseltrack_2015$lon[closest2015]
@@ -383,7 +404,7 @@ whaleclusters2015$Long <- vesseltrack_2015$lon[closest2015]
 # Select the columns we need
 finalwc2015 <- whaleclusters2015 %>%
   select(Cluster, GPStime, Lat, Long)
-nrow(finalwc2015) #492
+
 
 ```
 
@@ -394,21 +415,28 @@ vesseltracks2016 <- read.csv("Vessel_Tracks/2016_vesseltracks.csv")
 
 # Read in whale clusters data for 2016
 whaleclusters2016 <- read.csv("Whale_Clusters/2016_cluster.csv")
-nrow(whaleclusters2016) #412
 
-# Change the "time" column in original vessel track data to "GPStime" that contains the correct UTC time format. The parse_date_time function converts whatever format your data's date is in currently (%Y=4-digit year, %y=2-digit year, %m=month (00-12), %b=abbreviated month, %B=unabbreviated month, %d=day as a number (0-31), %H=hours, %M=minutes, %S=seconds) into the correct format (UTC). Need to set the time zone for Dominica, otherwise R assumes UTC format.
-vesseltracks2016$GPStime <- parse_date_time(vesseltracks2016$time, "%Y/%m/%d %H:%M:%S", tz = "America/Dominica")
 
-# Change the "Datetime" column name in original whale clusters data to "GPStime" that contains the correct UTC time format.
-whaleclusters2016$GPStime <- parse_date_time(whaleclusters2016$DateTime, "%d/%m/%y %H:%M:%S", tz = "America/Dominica")
+# Change the "time" column in original vessel track data 
+vesseltracks2016$GPStime <- parse_date_time(vesseltracks2016$time, 
+                                            "%Y/%m/%d %H:%M:%S", 
+                                            tz = "America/Dominica")
 
-# Create function to match up the timestamp of sightings in the whale cluster data with the closest GPS time from the vessel track data in order to assign geographic coordinates to the whale cluster data.
+# Change the "Datetime" column name in original whale clusters data 
+whaleclusters2016$GPStime <- parse_date_time(whaleclusters2016$DateTime, 
+                                             "%d/%m/%y %H:%M:%S", 
+                                             tz = "America/Dominica")
+
+# Create function to match up the timestamp of sightings in the whale cluster data 
 # Subtract the whale cluster GPStime and the vessel tracks GPStime.
 # Find the absolute value 
 # Take the min value of the absolute value
 # Apply the fuction to all rows in the whale cluster dataframe
-closest2016 <- sapply(seq(nrow(whaleclusters2016)), function(i) {which.min(abs(whaleclusters2016$GPStime[i] - vesseltracks2016$GPStime))})
+closest2016 <- sapply(seq(nrow(whaleclusters2016)), 
+                      function(i) {which.min(abs(whaleclusters2016$GPStime[i] - vesseltracks2016$GPStime))
+                        })
 
+#use the closest data to attach the lat/long to the whale clusters
 whaleclusters2016$Lat <- vesseltracks2016$lat[closest2016]
 
 whaleclusters2016$Long <- vesseltracks2016$lon[closest2016]
@@ -416,7 +444,8 @@ whaleclusters2016$Long <- vesseltracks2016$lon[closest2016]
 # Select the columns we need
 finalwc2016 <- whaleclusters2016 %>%
   select(Cluster, GPStime, Lat, Long)
-nrow(finalwc2016) #412
+
+
 
 ```
 
@@ -427,21 +456,29 @@ vesseltracks2017 <- read.csv("Vessel_Tracks/2017_vesseltracks.csv")
 
 # Read in whale clusters data for 2017
 whaleclusters2017 <- read.csv("Whale_Clusters/2017_cluster.csv")
-nrow(whaleclusters2017) #355
 
-# Change the "time" column in original vessel track data to "GPStime" that contains the correct UTC time format. The parse_date_time function converts whatever format your data's date is in currently (%Y=4-digit year, %y=2-digit year, %m=month (00-12), %b=abbreviated month, %B=unabbreviated month, %d=day as a number (0-31), %H=hours, %M=minutes, %S=seconds) into the correct format (UTC). Need to set the time zone for Dominica, otherwise R assumes UTC format.
-vesseltracks2017$GPStime <- parse_date_time(vesseltracks2017$time, "%Y/%m/%d %H:%M:%S", tz = "America/Dominica")
 
-# Change the "Datetime" column name in original whale clusters data to "GPStime" that contains the correct UTC time format.
-whaleclusters2017$GPStime <- parse_date_time(whaleclusters2017$DateTime, "%d/%m/%y %H:%M:%S", tz = "America/Dominica")
+# Change the "time" column in original vessel track data 
+vesseltracks2017$GPStime <- parse_date_time(vesseltracks2017$time, 
+                                            "%Y/%m/%d %H:%M:%S", 
+                                            tz = "America/Dominica")
 
-# Create function to match up the timestamp of sightings in the whale cluster data with the closest GPS time from the vessel track data in order to assign geographic coordinates to the whale cluster data.
+# Change the "Datetime" column name in original whale clusters data
+whaleclusters2017$GPStime <- parse_date_time(whaleclusters2017$DateTime, 
+                                             "%d/%m/%y %H:%M:%S", 
+                                             tz = "America/Dominica")
+
+# Create function to match up the timestamp of sightings in the whale cluster data 
 # Subtract the whale cluster GPStime and the vessel tracks GPStime.
 # Find the absolute value 
 # Take the min value of the absolute value
 # Apply the fuction to all rows in the whale cluster dataframe
-closest2017 <- sapply(seq(nrow(whaleclusters2017)), function(i) {which.min(abs(whaleclusters2017$GPStime[i] - vesseltracks2017$GPStime))})
+closest2017 <- sapply(seq(nrow(whaleclusters2017)), 
+                      function(i) {
+                        which.min(abs(whaleclusters2017$GPStime[i] - vesseltracks2017$GPStime))
+                        })
 
+#use the closest data to attach the lat/long to the whale clusters
 whaleclusters2017$Lat <- vesseltracks2017$lat[closest2017]
 
 whaleclusters2017$Long <- vesseltracks2017$lon[closest2017]
@@ -449,7 +486,6 @@ whaleclusters2017$Long <- vesseltracks2017$lon[closest2017]
 # Select the columns we need
 finalwc2017 <- whaleclusters2017 %>%
   select(Cluster, GPStime, Lat, Long)
-nrow(finalwc2017) #355
 
 ```
 
@@ -460,22 +496,30 @@ vesseltracks2018 <- read.csv("Vessel_Tracks/2018_vesseltracks.csv")
 
 # Read in whale clusters data for 2018
 whaleclusters2018 <- read.csv("Whale_Clusters/2018_cluster.csv")
-nrow(whaleclusters2018) #567
 
-# Change the "time" column in original vessel track data to "GPStime" that contains the correct UTC time format. The parse_date_time function converts whatever format your data's date is in currently (%Y=4-digit year, %y=2-digit year, %m=month (00-12), %b=abbreviated month, %B=unabbreviated month, %d=day as a number (0-31), %H=hours, %M=minutes, %S=seconds) into the correct format (UTC). Need to set the time zone for Dominica, otherwise R assumes UTC format.
-vesseltracks2018$GPStime <- parse_date_time(vesseltracks2018$time, "%b/%d/%Y %H:%M:%S", tz = "America/Dominica")
+# Change the "time" column in original vessel track data 
+vesseltracks2018$GPStime <- parse_date_time(vesseltracks2018$time, 
+                                            "%b/%d/%Y %H:%M:%S", 
+                                            tz = "America/Dominica")
 
-# Change the "Datetime" column name in original whale clusters data to "GPStime" that contains the correct UTC time format.
+# Combine the date and TrueTime columns into one column in whale cluster data
 whaleclusters2018$TrueDateTime <- paste(whaleclusters2018$Date, "", whaleclusters2018$TrueTime)
-whaleclusters2018$GPStime <- parse_date_time(whaleclusters2018$TrueDateTime, "%d/%m/%Y %H:%M:%S", tz = "America/Dominica")
 
-# Create function to match up the timestamp of sightings in the whale cluster data with the closest GPS time from the vessel track data in order to assign geographic coordinates to the whale cluster data.
+# Change the "Datetime" column name in original whale clusters data
+whaleclusters2018$GPStime <- parse_date_time(whaleclusters2018$TrueDateTime, 
+                                             "%d/%m/%Y %H:%M:%S", 
+                                             tz = "America/Dominica")
+
+# Create function to match up the timestamp of sightings in the whale cluster data 
 # Subtract the whale cluster GPStime and the vessel tracks GPStime.
 # Find the absolute value 
 # Take the min value of the absolute value
 # Apply the fuction to all rows in the whale cluster dataframe
-closest2018 <- sapply(seq(nrow(whaleclusters2018)), function(i) {which.min(abs(whaleclusters2018$GPStime[i] - vesseltracks2018$GPStime))})
+closest2018 <- sapply(seq(nrow(whaleclusters2018)), 
+                      function(i) {which.min(abs(whaleclusters2018$GPStime[i] - vesseltracks2018$GPStime))
+                        })
 
+#use the closest data to attach the lat/long to the whale clusters
 whaleclusters2018$Lat <- vesseltracks2018$lat[closest2018]
 
 whaleclusters2018$Long <- vesseltracks2018$lon[closest2018]
@@ -483,7 +527,6 @@ whaleclusters2018$Long <- vesseltracks2018$lon[closest2018]
 # Select the columns we need
 finalwc2018 <- whaleclusters2018 %>%
   dplyr::select(Cluster, GPStime, Lat, Long)
-nrow(finalwc2018) #567
 
 ```
 
@@ -505,12 +548,10 @@ Transfer "whaleclusters2005_2018.csv" to SQLite database:
 
 ```{r SQLite database}
 
-whalesightings2005_2018 <- read_csv("whaleclusters2005_2018.csv")
 
-filename <- "whalesightings.sqlite"
-whalesightings <- dbConnect(RSQLite::SQLite(), filename)
-dbWriteTable(whalesightings, "whalesightings2005_2018", whalesightings2005_2018)
+filename <- "whalesightings.sqlite" # Create sqlite file
+whalesightings <- dbConnect(RSQLite::SQLite(), filename) # Connect file to the database
+dbWriteTable(whalesightings, "whaleclusters0518", whaleclusters0518) # send the cluster dataframe to the database
 
 ```
 
-wait till the end to create some code to append the table in the database
